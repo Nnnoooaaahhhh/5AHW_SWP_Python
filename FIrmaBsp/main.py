@@ -15,17 +15,14 @@ def RandomString(length):
 
 
 def addPerson():
-    for x in range(10):
-        persons.append(stuff.Person(random.choice(list(stuff.Sex)), random.randint(16,65), RandomString(random.randint(4, 20)), random.choice(list(stuff.Department))))
+    return stuff.Person(random.choice(list(stuff.Sex)), random.randint(16,65), RandomString(random.randint(4, 20)), random.choice(list(stuff.Department)))
 
 def addMitarbeiter():
-    for x in range(10):
-        mitarbeiter.append(stuff.Mitarbeiter(random.choice(list(stuff.Sex)), random.randint(16,65), RandomString(random.randint(4, 20)), random.choice(list(stuff.Department)), random.randint(1000, 5000)))
+    return stuff.Mitarbeiter(random.choice(list(stuff.Sex)), random.randint(16,65), RandomString(random.randint(4, 20)), random.choice(list(stuff.Department)), random.randint(1000, 5000))
 
 
 def addGruppenleiter():
-    for x in range(4):
-        gruppenleiter.append(stuff.Gruppenleiter(random.choice(list(stuff.Sex)), random.randint(16,65), RandomString(random.randint(4, 20)), random.choice(list(stuff.Department)), random.randint(1000, 5000), "Leiter"))
+    return stuff.Gruppenleiter(random.choice(list(stuff.Sex)), random.randint(16, 65), RandomString(random.randint(4, 20)), random.choice(list(stuff.Department)), random.randint(1000, 5000), "Leiter")
 
 
 def getMitarbeiterGruppenleiter():
@@ -73,10 +70,9 @@ def MaleToFemale():
 
 
 if __name__ == "__main__":
-    print()
-    addPerson()
-    addMitarbeiter()
-    addGruppenleiter()
+    persons = [addPerson() for x in range(10)]
+    mitarbeiter = [addMitarbeiter() for x in range(10)]
+    gruppenleiter = [addGruppenleiter() for x in range(4)]
     print("Mitarbeiter: " + str(getMitarbeiterGruppenleiter()[0]))
     print("Gruppenleiter: " + str(getMitarbeiterGruppenleiter()[1]))
     print("Anzahl Abteilungen: " + str(getDepartments()))
