@@ -10,4 +10,4 @@ ebenfalls angezeigt, und die Daten, wie oft welches Symbol gewählt wurde an ein
 Die Daten jeden Spiels werden nach jeder Runde auch lokal in einer Datenbank abgespeichert</p>
 
 <p>Example-Output:</p>
-<img source="https://github.com/Nnnoooaaahhhh/5AHW_SWP_Python/blob/main/RockPaperScissors/example.PNG"/>
+<img src="https://github.com/Nnnoooaaahhhh/5AHW_SWP_Python/blob/main/RockPaperScissors/example.PNG">
