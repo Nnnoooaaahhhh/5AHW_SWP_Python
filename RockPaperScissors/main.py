@@ -2,13 +2,9 @@ import random
 import sys
 import mysql.connector
 from datetime import datetime
+import requests
 
 options = ["Rock", "Paper", "Scissors", "Spock", "Lizard"]
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Alfa1919",
-    database="RPS")
 
 
 def checkInput(userInput):
@@ -84,7 +80,8 @@ def playAgain():
         if yesNo == "n":
             return yesNo
 
-def insertInDB(winnerDB, p1input, p2input):
+
+def insertInDB(winnerDB, p1input, p2input, mydb):
     mycursor = mydb.cursor()
     sql = "insert into data (winner, p1pick, p2pick, playdate) values (%s, %s, %s, %s)"
     val = (winnerDB, p1input, p2input, datetime.now())
@@ -92,7 +89,7 @@ def insertInDB(winnerDB, p1input, p2input):
     mydb.commit()
 
 
-def getGameCount():
+def getGameCount(mydb):
     mycursor = mydb.cursor()
     mycursor.execute("select count(playdate) from data")
     myresult = mycursor.fetchone()
@@ -101,7 +98,7 @@ def getGameCount():
     return gameCount
 
 
-def optionData(option):
+def optionData(option, mydb):
     mycursor = mydb.cursor(buffered=True)
     mycursor2 = mydb.cursor(buffered=True)
     mycursor.execute("select count(playdate) from data where p1pick = '" + option + "'")
@@ -115,7 +112,7 @@ def optionData(option):
     return optionCount
 
 
-def winnerDataFromDB():
+def winnerDataFromDB(mydb):
     mycursor = mydb.cursor(buffered=True)
     mycursor.execute("select count(playdate) from data where winner = 'p1'")
     myresult = mycursor.fetchone()
@@ -132,14 +129,70 @@ def winnerDataFromDB():
     return p1Wins, p2Wins, Ties
 
 
-if __name__ == '__main__':
+def createTable(mydb):
+    mycursor = mydb.cursor()
+    mycursor.execute("create table if not exists data(winner varchar(2), p1pick varchar(10), p2pick varchar(10), playdate dateTime PRIMARY KEY)")
+    return
+
+
+def createDatabase():
+    mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="root")
+    mycursor = mydb.cursor()
+    mycursor.execute("create database if not exists RPS")
+    mydb.database = "RPS"
+    return mydb
+
+
+def sendRequest(username, voteScissors, voteRock, votePaper, voteSpock, voteLizard, apiIP = "http://127.0.0.1:5000"):
+    reqUrl = apiIP + "/v1/updateRecord"
+    reqUrl+= "?username=" + str(username) + "&voteScissors=" + str(voteScissors)
+    reqUrl+= "&voteRock=" + str(voteRock) + "&votePaper=" + str(votePaper)
+    reqUrl+= "&voteSpock=" + str(voteSpock) + "&voteLizard=" + str(voteLizard)
+    responseCode = 0
+    try:
+        response = requests.post(reqUrl, None)
+        responseCode = response.status_code
+    except:
+        return 0
+    return responseCode
+
+
+def playerWinPrint(a):
     player1wins = 0
     player2wins = 0
     ties = 0
+    print(a)
+    if a == "Player 1 Wins":
+        player1wins += 1
+    if a == "Player 2 Wins":
+        player2wins += 1
+    if a == "Tie":
+        ties += 1
+    print("Player 1 wins: " + str(player1wins))
+    print("Player 2 wins: " + str(player2wins))
+    print("Ties: " + str(ties))
+
+
+def optionsPrints():
+    a = []
+    for x in options:
+        print(x + " picked * " + str(optionData(x, mydb)) + "; Pick-Percentage: " + str(round((optionData(x, mydb)/(getGameCount(mydb)*2)*100),2)) + "%")
+        a.append(optionData(x, mydb))
+    #api-request
+    code = sendRequest("ng", a[2], a[0], a[1], a[3], a[4])
+    print("Player 1 wins: " + str(winnerDataFromDB(mydb)[0]) + "; Win-Percentage: " + str(round((winnerDataFromDB(mydb)[0]/(getGameCount(mydb))*100),2)) + "%")
+    print("Player 2 wins: " + str(winnerDataFromDB(mydb)[1]) + "; Win-Percentage: " + str(round((winnerDataFromDB(mydb)[1]/(getGameCount(mydb))*100),2)) + "%")
+    print("Ties: " + str(winnerDataFromDB(mydb)[2]) + "; Percentage: " + str(round((winnerDataFromDB(mydb)[2]/(getGameCount(mydb))*100),2)) + "%")
+
+
+if __name__ == '__main__':
+    mydb = createDatabase()
     playercount = playerCount()
     yesNo = "y"
-    p1input = ""
-    p2input = ""
+    createTable(mydb)
     while yesNo == "y":
         if playercount == 2:
             p1input, p2input = twoplayers()
@@ -147,25 +200,11 @@ if __name__ == '__main__':
             p1input, p2input = oneplayer()
         p1Number = getNumber(p1input)
         p2Number = getNumber(p2input)
-        a = defineWinner(p1Number, p2Number)[0]
-        print(a)
-        if a == "Player 1 Wins":
-            player1wins += 1
-        if a == "Player 2 Wins":
-            player2wins += 1
-        if a == "Tie":
-            ties += 1
-        print("Player 1 wins: " + str(player1wins))
-        print("Player 2 wins: " + str(player2wins))
-        print("Ties: " + str(ties))
-        insertInDB(defineWinner(p1Number, p2Number)[1], p1input, p2input)
+        playerWinPrint(defineWinner(p1Number, p2Number)[0])
+        insertInDB(defineWinner(p1Number, p2Number)[1], p1input, p2input, mydb)
         yesNo = playAgain()
-    print("Total number of games played: " + str(getGameCount()))
-    for x in options:
-        print(x + " picked * " + str(optionData(x)) + "; Pick-Percentage: " + str(round((optionData(x)/(getGameCount()*2)*100),2)) + "%")
-    print("Player 1 wins: " + str(winnerDataFromDB()[0]) + "; Win-Percentage: " + str(round((winnerDataFromDB()[0]/(getGameCount()*2)*100),2)) + "%")
-    print("Player 2 wins: " + str(winnerDataFromDB()[1]) + "; Win-Percentage: " + str(round((winnerDataFromDB()[1]/(getGameCount()*2)*100),2)) + "%")
-    print("Ties: " + str(winnerDataFromDB()[2]) + "; Percentage: " + str(round((winnerDataFromDB()[2]/(getGameCount()*2)*100),2)) + "%")
+    print("Total number of games played: " + str(getGameCount(mydb)))
+    optionsPrints()
     sys.exit(0)
 
 
