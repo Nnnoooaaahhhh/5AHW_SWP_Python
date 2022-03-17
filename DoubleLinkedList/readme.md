@@ -42,7 +42,7 @@ Aufsteigend sortieren </br>
   <tr>
     <td>append</td>
     <td>n</td>
-    <td>1</td>
+    <td>n</td>
   </tr>
   <tr>
     <td>InsertAfterIndex</td>
