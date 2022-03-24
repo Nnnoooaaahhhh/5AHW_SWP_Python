@@ -4,28 +4,38 @@ import Arraylist as al
 import time
 
 if __name__ == "__main__":
-    print("main")
+    llTimes = []
+    aLTimes = []
     doubleLinkedList = dll.DoubleLinkedList()
     arrayList = al.Arraylist()
-    for i in range(10000):
-        x = random.randint(0, 10000)
-        doubleLinkedList.append(x)
-        arrayList.append(x)
-    arrayList.printAll()
-    print("\n")
-    doubleLinkedList.printList()
-    start = time.time()
-    doubleLinkedList.insSortAsc()
-    end = time.time()
-    print(end-start)
-    start = time.time()
-    arrayList.sortAsc()
-    end = time.time()
-    print(end - start)
-    arrayList.printAll()
-    print("\n")
-    doubleLinkedList.printList()
-
+    for i in range(5):
+        for i in range(10000):
+            x = random.randint(0, 10000)
+            doubleLinkedList.append(x)
+            arrayList.append(x)
+        start = time.time()
+        doubleLinkedList.insSortAsc()
+        end = time.time()
+        llTimes.append(end-start)
+        start = time.time()
+        arrayList.sortAsc()
+        end = time.time()
+        aLTimes.append(end-start)
+        doubleLinkedList.clear()
+        arrayList.clear()
+    print("Double Linked List Times:")
+    for x in llTimes:
+        print(str(x) + " ")
+    print()
+    print("Arraylist Times:")
+    for x in aLTimes:
+        print(str(x) + " ")
+    print()
+    print("Double Linked List Average")
+    print(sum(llTimes)/len(llTimes))
+    print()
+    print("Arraylist Average")
+    print(sum(aLTimes)/len(llTimes))
     #ArrayList Methoden
     #arrayList.append(34)
     #arrayList.append(10)

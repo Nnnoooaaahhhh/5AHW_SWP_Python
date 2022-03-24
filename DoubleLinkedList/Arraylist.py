@@ -68,6 +68,9 @@ class Arraylist:
             self.list.insert(index +  1, value)
 
 
+    def clear(self):
+        self.list.clear()
+
     def sortAsc(self):
         for i in range(1, self.getLength()):
             key = self.list[i]

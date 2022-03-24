@@ -201,6 +201,12 @@ class DoubleLinkedList:
             tempNode = tempNode.next
         return min
 
+    def clear(self):
+        while (self.head != None):
+            temp = self.head
+            self.head = self.head.next
+            temp = None
+
 
     def insSortAsc(self):
         key = self.head
