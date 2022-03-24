@@ -19,7 +19,7 @@ Absteigend sortieren </br>
 Aufsteigend sortieren </br>
 </p>
 
-<p>Als Beispiel wurden in jeder Datenstruktur 10000 Zufallszahlen von 0-10000 eingefügt. Anschließend wurden diese mit den angebotenen Methoden sortiert. Die Arraylist braucht durchschnittlich ca. zweimal solange wie die Double Linked List -> Double Linked List ca. 3-4 sek, Arraylist ca. 6-8 sek.</p>
+<p>Als Beispiel wurden in jeder Datenstruktur 5*10000 Zufallszahlen von 0-10000 eingefügt. Anschließend wurden diese mit den angebotenen Methoden sortiert. Von jedem Sortiervorgang wird schließlich die Zeit ausgegeben, sowie die durchschnittlich benötigte Zeit. Die Arraylist braucht durchschnittlich ca. zweimal solange wie die Double Linked List -> Double Linked List ca. 3-4 sek, Arraylist ca. 6-8 sek.</p>
 
 
   <h2>Aufwandsklassen</h2>
